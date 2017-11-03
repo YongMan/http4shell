@@ -1,4 +1,5 @@
 listen: ":8080"
+secret: "I am a hero"
 cmds:
   - cmd:
       type: 0

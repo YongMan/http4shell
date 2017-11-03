@@ -8,10 +8,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AuthWrapper struct{}
+type AuthWrapper struct {
+	token *Token
+}
 
-func NewAuthWrapper() *AuthWrapper {
-	return &AuthWrapper{}
+func NewAuthWrapper(token *Token) *AuthWrapper {
+	return &AuthWrapper{token: token}
 }
 
 func (aw *AuthWrapper) AuthWrapper(handlerFunc gin.HandlerFunc) gin.HandlerFunc {
@@ -19,7 +21,7 @@ func (aw *AuthWrapper) AuthWrapper(handlerFunc gin.HandlerFunc) gin.HandlerFunc 
 		// validate token
 		req := c.Request
 		token, err := request.ParseFromRequest(req, request.AuthorizationHeaderExtractor, func(token *jwt.Token) (interface{}, error) {
-			return []byte(Secret), nil
+			return []byte(aw.token.Secret), nil
 		})
 
 		if err != nil {

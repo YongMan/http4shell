@@ -15,6 +15,7 @@ const (
 
 type Config struct {
 	Listen string `yaml:"listen"`
+	Secret string `yaml:"secret"`
 	Cmds   []Cmds `yaml:"cmds"`
 }
 
@@ -28,7 +29,6 @@ type Cmds struct {
 
 func LoadConfig(file string) (*Config, error) {
 	var c Config
-	//var i interface{}
 
 	f, err := os.Open(file)
 	if err != nil {

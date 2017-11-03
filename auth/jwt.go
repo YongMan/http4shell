@@ -6,31 +6,29 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func main() {
-	fmt.Println("vim-go")
+// hard code secret
+type Token struct {
+	Secret string
 }
 
-// hard code secret
-var Secret string = "I am a hero"
-
-func NewToken(username string) (string, error) {
+func (t *Token) NewToken(username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": username,
 	})
 
-	tokenString, err := token.SignedString([]byte(Secret))
+	tokenString, err := token.SignedString([]byte(t.Secret))
 	if err != nil {
 		return "", err
 	}
 	return tokenString, nil
 }
 
-func ValidateToken(tokenString string) (string, bool) {
+func (t *Token) ValidateToken(tokenString string) (string, bool) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected sigining method: %v", token.Header["alg"])
 		}
-		return []byte(Secret), nil
+		return []byte(t.Secret), nil
 	})
 	if err != nil {
 		return "", false

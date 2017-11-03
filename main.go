@@ -32,7 +32,7 @@ func main() {
 
 	r := gin.Default()
 
-	authWrapper := auth.NewAuthWrapper()
+	authWrapper := auth.NewAuthWrapper(&auth.Token{Secret: c.Secret})
 	runHandler := http.NewHandlerRun(c)
 
 	r.POST("/run", authWrapper.AuthWrapper(runHandler.RunHandler))
