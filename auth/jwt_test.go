@@ -7,15 +7,15 @@ import (
 
 func TestNewToken(t *testing.T) {
 	to := &Token{Secret: "I am a hero"}
-	str, err := to.NewToken("cloud")
+	str, err := to.GenToken("cloud")
 	fmt.Println(str, err)
-	str, err = to.NewToken("cloud1")
+	str, err = to.GenToken("cloud1")
 	fmt.Println(str, err)
 }
 
 func TestValidateToken(t *testing.T) {
 	to := &Token{Secret: "I am a hero"}
-	str, err := to.NewToken("cloud")
+	str, err := to.GenToken("cloud")
 	fmt.Println(str, err)
 
 	name, valid := to.ValidateToken(str)

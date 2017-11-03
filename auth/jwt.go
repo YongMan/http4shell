@@ -11,7 +11,7 @@ type Token struct {
 	Secret string
 }
 
-func (t *Token) NewToken(username string) (string, error) {
+func (t *Token) GenToken(username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": username,
 	})

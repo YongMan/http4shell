@@ -3,6 +3,7 @@ package auth
 import (
 	"net/http"
 
+	localhttp "github.com/YongMan/http4shell/http"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/request"
 	"github.com/gin-gonic/gin"
@@ -25,11 +26,11 @@ func (aw *AuthWrapper) AuthWrapper(handlerFunc gin.HandlerFunc) gin.HandlerFunc 
 		})
 
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, err.Error())
+			c.JSON(http.StatusUnauthorized, localhttp.MakeResponse(1, err.Error(), nil))
 			return
 		} else {
 			if token.Valid == false {
-				c.JSON(http.StatusUnauthorized, "Unauthorized access")
+				c.JSON(http.StatusUnauthorized, localhttp.MakeResponse(1, "Unauthorized access", nil))
 				return
 			}
 		}
