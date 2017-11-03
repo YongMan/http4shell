@@ -1,6 +1,8 @@
 package http
 
 import (
+	"bytes"
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -35,6 +37,10 @@ func (r *Request) Execute() Response {
 			r.Timeout = 10
 		}
 		cmd := shell.Commandf(r.Cmd)
+
+		var stdout, stderr bytes.Buffer
+		cmd.Stdout = &stdout
+		cmd.Stderr = &stderr
 		cmd.Start()
 
 		doneCh := make(chan error, 1)
@@ -49,15 +55,11 @@ func (r *Request) Execute() Response {
 			}
 			return MakeResponse(1, "process timeout", nil)
 		case err := <-doneCh:
+			fmt.Println(err)
 			if err != nil {
-				return MakeResponse(1, err.Error(), nil)
+				return MakeResponse(1, err.Error(), string(stderr.Bytes()))
 			} else {
-				out, err := cmd.CombinedOutput()
-				if err != nil {
-					return MakeResponse(1, err.Error(), nil)
-				} else {
-					return MakeResponse(0, "OK", string(out))
-				}
+				return MakeResponse(0, "OK", string(stdout.Bytes()))
 			}
 		}
 	default:

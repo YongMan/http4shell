@@ -18,12 +18,13 @@ func AuthWrapper(handlerFunc gin.HandlerFunc) gin.HandlerFunc {
 
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, err.Error())
+			return
 		} else {
 			if token.Valid == false {
 				c.JSON(http.StatusUnauthorized, "Unauthorized access")
+				return
 			}
 		}
-		return
 		// token is validate
 		// execute function passed by argument
 		handlerFunc(c)
