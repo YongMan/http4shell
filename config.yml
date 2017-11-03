@@ -1,0 +1,11 @@
+listen: ":8080"
+cmds:
+  - cmd:
+      type: 0
+      arg: "ls"
+      desc: "example readonly command"
+  - cmd:
+      type: 1
+      arg: "ls -al"
+      desc: "another readonly command"
+

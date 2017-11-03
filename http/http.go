@@ -2,9 +2,11 @@ package http
 
 import (
 	"bytes"
-	"fmt"
+	"net/http"
+	"strings"
 	"time"
 
+	"github.com/YongMan/http4shell/config"
 	"github.com/gin-gonic/gin"
 	"github.com/keegancsmith/shell"
 )
@@ -21,12 +23,20 @@ type Response struct {
 	Body   interface{} `json:body`
 }
 
+type HandlerRun struct {
+	Config *config.Config
+}
+
 func MakeResponse(errno int, errmsg string, body interface{}) Response {
 	return Response{
 		Errno:  errno,
 		Errmsg: errmsg,
 		Body:   body,
 	}
+}
+
+func NewHandlerRun(c *config.Config) *HandlerRun {
+	return &HandlerRun{Config: c}
 }
 
 func (r *Request) Execute() Response {
@@ -55,7 +65,6 @@ func (r *Request) Execute() Response {
 			}
 			return MakeResponse(1, "process timeout", nil)
 		case err := <-doneCh:
-			fmt.Println(err)
 			if err != nil {
 				return MakeResponse(1, err.Error(), string(stderr.Bytes()))
 			} else {
@@ -67,10 +76,27 @@ func (r *Request) Execute() Response {
 	}
 }
 
-func RunHandler(c *gin.Context) {
+func (h *HandlerRun) RunHandler(c *gin.Context) {
 	var req Request
 
 	c.Bind(&req)
+
+	// check if cmd in cmds whitelist
+	valid := false
+
+	cmd := strings.TrimSpace(req.Cmd)
+
+	for _, c := range h.Config.Cmds {
+		if c.Cmd.Arg == cmd {
+			valid = true
+			break
+		}
+	}
+	if !valid {
+		c.JSON(http.StatusUnauthorized, MakeResponse(1, "Unauthorized command, please contact admin", nil))
+		return
+	}
+
 	resp := req.Execute()
 	c.JSON(200, resp)
 }

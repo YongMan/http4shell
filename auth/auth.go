@@ -8,7 +8,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AuthWrapper(handlerFunc gin.HandlerFunc) gin.HandlerFunc {
+type AuthWrapper struct{}
+
+func NewAuthWrapper() *AuthWrapper {
+	return &AuthWrapper{}
+}
+
+func (aw *AuthWrapper) AuthWrapper(handlerFunc gin.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// validate token
 		req := c.Request
