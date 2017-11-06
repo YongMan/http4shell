@@ -1,4 +1,4 @@
-# Execute shell command from http request with authentition
+# Execute shell command from http request with authentication
 
 ## Use
 
